@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:gravity="center"
+    android:orientation="vertical"
+    tools:context=".MainActivity">
+
+    <ImageView
+        android:id="@+id/image"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@drawable/can_update" />
+
+
+    <LinearLayout
+        android:id="@+id/lin_update"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="30dp"
+        android:gravity="center"
+        android:orientation="horizontal">
+
+        <Button
+            android:id="@+id/btn_cancel"
+            android:layout_width="100dp"
+            android:layout_height="32dp"
+            android:layout_marginRight="20dp"
+            android:background="@drawable/kuang_white"
+            android:text="暂不"
+            android:textColor="#6e6e6e"
+            android:textSize="12sp" />
+
+        <Button
+            android:id="@+id/btn_sure"
+            android:layout_width="100dp"
+            android:layout_height="32dp"
+            android:layout_marginLeft="20dp"
+            android:background="#1e7bf4"
+            android:text="确定"
+            android:textColor="#FFFFFF"
+            android:textSize="12sp" />
+
+
+    </LinearLayout>
+
+    <ProgressBar
+        android:layout_marginTop="30dp"
+        android:visibility="gone"
+        style="?android:attr/progressBarStyleHorizontal"
+        android:id="@+id/progress"
+        android:layout_width="400px"
+        android:layout_height="wrap_content" />
+
+
+</LinearLayout>
