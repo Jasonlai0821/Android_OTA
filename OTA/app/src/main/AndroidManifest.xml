@@ -3,8 +3,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     package="com.xinshiyun.otaupgrade"
     android:sharedUserId="android.uid.system"
-    android:versionCode="1"
-    android:versionName="1.0.1">
+    android:versionCode="4"
+    android:versionName="1.0.4">
 
     <uses-permission
         android:name="android.permission.RECOVERY"
@@ -36,11 +36,18 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".MainActivity">
+
+        <uses-library android:name="org.apache.http.legacy" android:required="false"/>
+
+        <activity android:name=".MainActivity"
+            android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
+                <action android:name="com.xinshiyun.otaupgrade.action" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
+<!--                <category android:name="android.intent.category.DEFAULT" />-->
+                <category android:name="com.xsy.otaupgrade.default"/>
             </intent-filter>
         </activity>
 

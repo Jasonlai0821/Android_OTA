@@ -13,10 +13,12 @@ import com.xinshiyun.otaupgrade.upgrade.download.DownloadTaskExcutor;
 import com.xinshiyun.otaupgrade.upgrade.http.OTAUpgradeQueryFail;
 import com.xinshiyun.otaupgrade.upgrade.http.OTAUpgradeRequestManager;
 import com.xinshiyun.otaupgrade.upgrade.install.InstallManager;
+import com.xinshiyun.otaupgrade.upgrade.misc.MD5Utils;
 import com.xinshiyun.otaupgrade.upgrade.misc.SysProperties;
 import com.xinshiyun.otaupgrade.upgrade.misc.Utils;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
@@ -41,6 +43,7 @@ public class OTAUpgradeServiceImp {
     private InstallManagerListener mInstallManagerListener = null;
 
     private OTAUpgradeServiceCallback mOTAUpgradeImpListener = null;
+    private boolean mIsPackageValid = false;
 
     public Context mContext;
     private static boolean isForceUpgrade = false;
@@ -262,6 +265,7 @@ public class OTAUpgradeServiceImp {
     public void onUpgradeQueryRequest()
     {
         Log.d(TAG, "onUpgradeQueryRequest()");
+        mIsPackageValid = false;
         if(mOTAUpgradeRequestManager != null){
             mOTAUpgradeRequestManager.onSysUpgradeQueryRequest();
         }
@@ -313,7 +317,9 @@ public class OTAUpgradeServiceImp {
         Log.d(TAG, "onStartInstall() path:"+path);
         String upgradefile ="";
         OTAUpgradeInfo upgradeinfo = OTAUpgradeSharePreference.getOTAUpgradeInfo(mContext);
-
+        if(mInstallManagerListener != null){
+            mInstallManagerListener.onInstallSuccess();
+        }
 
         if(path == null || path.equals("") || path.equals("null")){
             upgradefile = upgradeinfo.getFilePath();
@@ -329,7 +335,8 @@ public class OTAUpgradeServiceImp {
 
         if(mInstallManager != null){
             Log.d(TAG, "InstallManager startInstall() upgradefile:"+upgradefile);
-            mInstallManager.startInstall(upgradefile);
+            //mInstallManager.startInstall(upgradefile);
+            mInstallManager.startInstall(upgradefile,mIsPackageValid);
         }
     }
 
@@ -373,6 +380,21 @@ public class OTAUpgradeServiceImp {
         }
     }
 
+    private boolean checkUpgradeFileValid(String path)
+    {
+        boolean ret = false;
+        String dlfileMD5 = "";
+
+        File file = new File(path);
+        try {
+            dlfileMD5 = MD5Utils.getFileMD5String(file);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        ret = dlfileMD5.equalsIgnoreCase(OTAUpgradeSharePreference.getOTAUpgradeInfo(mContext).getMd5());
+        Log.d(TAG, "checkUpgradeFileValid() ret ="+ ret);
+        return ret;
+    }
 
     private Handler mDownloadHandler = new Handler(){
         @Override
@@ -417,8 +439,10 @@ public class OTAUpgradeServiceImp {
                     Utils.deletefile(mDownloadTaskExcutor.getPath(downloadId));
                     upgradeinfo.setFilePath(Utils.getFileName(mDownloadTaskExcutor.getPath(downloadId)));
 
+                    mIsPackageValid = checkUpgradeFileValid(Utils.getFileName(mDownloadTaskExcutor.getPath(downloadId)));
+
                     if(isForceUpgrade(upgradeinfo)){//not notify UI for user's interaction
-                        onStartInstall(mDownloadTaskExcutor.getPath(downloadId));
+                        onStartInstall(Utils.getFileName(mDownloadTaskExcutor.getPath(downloadId)));
                     }else{//notify UI for user's interaction
                         Log.d(TAG, "DownloadManager.STATUS_SUCCESSFUL wait for user's interaction");
                     }

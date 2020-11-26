@@ -19,14 +19,14 @@ public class SysUpgradeQueryRequest extends AbstractHttpGet {
     private static final String TAG = SysUpgradeQueryRequest.class.getSimpleName();
 
     //private final static String URL = "http://api.upgrade.skysrt.com/ied/v3/getUpgrader";
-    private final static String URL = "http://192.168.60.126:20603/";
+    //private final static String URL = "http://192.168.60.126:20603/";
+    private final static String URL = "http://ota.videoincloud.com/";
     private HttpSysUpgradeRequestCallback mHttpSysUpgradeRequestListener = null;
     private Context mContext;
 
     public SysUpgradeQueryRequest(Context context){
         mContext = context;
     }
-
 
     private JsonHttpResponseHandler jsonHttpResponseHandler = new JsonHttpResponseHandler() {
 

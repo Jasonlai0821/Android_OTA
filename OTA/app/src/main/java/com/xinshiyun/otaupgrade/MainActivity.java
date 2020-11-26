@@ -1,14 +1,21 @@
 package com.xinshiyun.otaupgrade;
 
 import android.Manifest;
+import android.app.Activity;
+import android.app.DownloadManager;
+import android.net.ConnectivityManager;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.Message;
 import android.util.Log;
 import android.view.View;
+import android.view.Window;
+import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
+import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
@@ -17,6 +24,9 @@ import androidx.core.content.ContextCompat;
 import com.xinshiyun.otaupgrade.upgrade.OTAUpgradeInfo;
 import com.xinshiyun.otaupgrade.upgrade.OTAUpgradeManager;
 import com.xinshiyun.otaupgrade.upgrade.OTAUpgradeManager.OTASTATE;
+import com.xinshiyun.otaupgrade.upgrade.OTAUpgradeSharePreference;
+import com.xinshiyun.otaupgrade.upgrade.download.DownloadProgress;
+import com.xinshiyun.otaupgrade.upgrade.misc.Utils;
 
 import java.util.ArrayList;
 
@@ -34,6 +44,7 @@ public class MainActivity extends AppCompatActivity {
     private ProgressBar progressBar = null;
     private Button mBtnSure = null;
     private Button mBtnCancle = null;
+    private LoadingDialog mDialog = null;
     private int mState = OTASTATE.OTA_IDLE;
 
     //private int type;
@@ -44,7 +55,6 @@ public class MainActivity extends AppCompatActivity {
         Log.d(TAG, "onCreate()");
         setContentView(R.layout.activity_main);
         initView();
-
         initPermissions();
 
         mBtnSure.setOnClickListener(new View.OnClickListener() {
@@ -57,6 +67,7 @@ public class MainActivity extends AppCompatActivity {
                         break;
                     case OTASTATE.OTA_DOWNLOADSUCCESS:
                         //showViewInstall();
+                        //Toast.makeText(MainActivity.this, "解包升级中", Toast.LENGTH_LONG).show();
                         mOTAUpgradeManager.startInstall();
                         break;
                     case OTASTATE.OTA_QUERYREQUEST_FAILED:
@@ -137,7 +148,7 @@ public class MainActivity extends AppCompatActivity {
                 mBtnCancle.setVisibility(View.GONE);
                 progressBar.setVisibility(View.GONE);
             }
-        }, 0);
+        }, 10);
     }
 
     private void showViewNoNewVersion()
@@ -148,6 +159,14 @@ public class MainActivity extends AppCompatActivity {
         mBtnSure.setVisibility(View.VISIBLE);
         mBtnCancle.setVisibility(View.GONE);
         mState = OTASTATE.OTA_QUERYREQUEST_FAILED;
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                exitOta();
+                finish();
+            }
+        }, 60*1000);
+        Log.d(TAG, "showViewNoNewVersion() OTA app while exit after 1 minute!!!");
     }
 
     private void showViewNewVersion()
@@ -175,6 +194,19 @@ public class MainActivity extends AppCompatActivity {
             }
         }, 0);
         mState = OTASTATE.OTA_INSTALLING;
+    }
+
+    public void showLoadingDialog(Activity activity, String info) {
+        Log.d(TAG, "showLoadingDialog()");
+        mDialog = new LoadingDialog(activity);
+        mDialog.getDialog(info);
+    }
+
+    public void dissMissLoadingDialog() {
+        Log.d(TAG, "dissMissLoadingDialog()");
+        if (mDialog != null) {
+            mDialog.dissMissDialog();
+        }
     }
 
     public class OTAUpgradeInfoTTSListener implements OTAUpgradeManager.OTAUpgradeInfoTTSCallback{
@@ -206,9 +238,11 @@ public class MainActivity extends AppCompatActivity {
                     showViewUpdateFailed();
                     break;
                 case OTASTATE.OTA_INSTALLING:
-                    showViewInstall();
+                    //showViewInstall();
+                    showLoadingDialog(MainActivity.this,"加载中");
                     break;
                 case OTASTATE.OTA_INSTALLSUCCESS:
+                    dissMissLoadingDialog();
                     break;
                 case OTASTATE.OTA_INSTALLFAILED:
                     showViewUpdateFailed();
@@ -255,6 +289,8 @@ public class MainActivity extends AppCompatActivity {
         //可更新确定按钮
         mBtnSure = findViewById(R.id.btn_sure);
         mBtnCancle = findViewById(R.id.btn_cancel);
+        getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,WindowManager.LayoutParams.FLAG_FULLSCREEN);
+
         showViewCheckUpdate();
     }
 
@@ -291,4 +327,12 @@ public class MainActivity extends AppCompatActivity {
             mOTAUpgradeManager = null;
         }
     }
+
+    private Handler mInstallHandler = new Handler(){
+        @Override
+        public void handleMessage(Message msg) {
+            super.handleMessage(msg);
+            mOTAUpgradeManager.startInstall();
+        }
+    };
 }

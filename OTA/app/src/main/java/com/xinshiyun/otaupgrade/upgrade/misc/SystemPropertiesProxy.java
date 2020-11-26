@@ -1,8 +1,5 @@
 package com.xinshiyun.otaupgrade.upgrade.misc;
 
-/**
- * Created by zhaowei on 2016/5/10.
- */
 import android.content.Context;
 import android.util.Log;
 

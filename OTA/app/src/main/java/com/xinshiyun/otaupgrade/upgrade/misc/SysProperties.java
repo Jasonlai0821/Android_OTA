@@ -9,12 +9,12 @@ public class SysProperties {
 
     // 获取机芯
     public static String getChip(Context contex) {
-        return SystemPropertiesProxy.get(contex, "ro.product.device", "rk3399_all");
+        return SystemPropertiesProxy.get(contex, "ro.product.device", "msm8953_64");
     }
 
     // 获取机型
     public static String getModel(Context contex) {
-        return SystemPropertiesProxy.get(contex, "ro.product.model", "XTA-110");
+        return SystemPropertiesProxy.get(contex, "ro.product.model", "XTS100");
     }
 
     // 获取当前系统版本号
@@ -55,7 +55,7 @@ public class SysProperties {
     }
 
     public static String getLanguage(Context contex) {
-        return SystemPropertiesProxy.get(contex, "ro.product.locale.language]:", "zh");
+        return SystemPropertiesProxy.get(contex, "ro.product.locale.language:", "zh");
     }
 
     private static String removeDot(String s) {

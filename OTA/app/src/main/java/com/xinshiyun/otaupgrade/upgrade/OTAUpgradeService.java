@@ -7,6 +7,8 @@ import android.os.RemoteCallbackList;
 import android.os.RemoteException;
 import android.util.Log;
 
+import com.xinshiyun.otaupgrade.upgrade.misc.NetUtils;
+
 public class OTAUpgradeService extends Service {
     private final static String TAG = OTAUpgradeService.class.getSimpleName();
 
@@ -29,7 +31,14 @@ public class OTAUpgradeService extends Service {
         mOTAUpgradeImpListener = new OTAUpgradeImpListener();
         mOTAUpgradeServiceImp.setOTAUpgradeServiceCallback(mOTAUpgradeImpListener);
 
-        onStartOTAQueryRequest();
+        if(NetUtils.getNetWorkState(this) == NetUtils.NETWORK_NONE){
+            if(mOTAUpgradeImpListener != null)
+                mOTAUpgradeImpListener.onOTAQueryResultFailure();
+            Log.d(TAG, "onCreate() NetWorkState is NETWORK_NONE");
+        }else{
+            Log.d(TAG, "onCreate() onStartOTAQueryRequest");
+            onStartOTAQueryRequest();
+        }
     }
 
     @Override

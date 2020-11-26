@@ -11,6 +11,8 @@ import android.os.IBinder;
 import android.os.RemoteException;
 import android.util.Log;
 
+import com.xinshiyun.otaupgrade.upgrade.misc.NetUtils;
+
 import java.util.List;
 
 /**
@@ -135,6 +137,17 @@ public class OTAUpgradeManager {
             }catch (RemoteException e){
                 e.printStackTrace();
             }
+
+            if(NetUtils.getNetWorkState(mContext) == NetUtils.NETWORK_NONE){
+                if(mOTAUpgradeCallback != null) {
+                    try {
+                        mOTAUpgradeCallback.onOTARequestFailure();
+                    } catch (RemoteException e) {
+                        e.printStackTrace();
+                    }
+                }
+                Log.d(TAG, "onCreate() NetWorkState is NETWORK_NONE");
+            }
         }
 
         @Override
@@ -220,7 +233,7 @@ public class OTAUpgradeManager {
             Log.d(TAG,"onSuccess()");
             //notify UI for user's interaction
             if(mOTAUpgradeNofityUICallback != null){
-                mOTAUpgradeNofityUICallback.onNofityState(OTASTATE.OTA_INSTALLSUCCESS,0,null);
+                mOTAUpgradeNofityUICallback.onNofityState(OTASTATE.OTA_INSTALLING,0,null);
             }
         }
 

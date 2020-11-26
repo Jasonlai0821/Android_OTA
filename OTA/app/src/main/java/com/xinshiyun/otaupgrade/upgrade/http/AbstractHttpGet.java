@@ -1,6 +1,7 @@
 package com.xinshiyun.otaupgrade.upgrade.http;
 
 import android.content.Context;
+import android.util.Log;
 
 import com.loopj.android.http.AsyncHttpClient;
 import com.loopj.android.http.ResponseHandlerInterface;
@@ -31,6 +32,22 @@ public abstract class AbstractHttpGet {
             asyncHttpClient.addHeader("cDevice", "2S");
             asyncHttpClient.addHeader("cAreaCode", "086");
             asyncHttpClient.post(url, handler);
+            Log.d("HttpRequest","MAC:"+SysProperties.getMac(context)+" "
+                                            +"cModel:"+ SysProperties.getModel(context)+" "
+                                            +"cChip:"+SysProperties.getChip(context)+" "
+                                            +"cSize:"+"21"+" "
+                                            +"cResolution:"+"1920*1080"+" "
+                                            +"cSerialNO:"+SysProperties.getSerialNO(context)+" "
+                                            +"cSystemVersion:"+SysProperties.getVersion(context)+" "
+                                            +"cSystemStatus:"+"0"+" "
+                                            +"cPRVersion:"+SysProperties.getPRVersion(context)+" "
+                                            +"cPkg:"+"com.xinshiyun.otaupgrade"+" "
+                                            +"cBrand:"+"xinshiyun"+" "
+                                            +"cCountry:"+SysProperties.getRegion(context)+" "
+                                            +"cLanguage:"+SysProperties.getLanguage(context)+" "
+                                            +"cDevice:"+"2S"+" "
+                                            +"cAreaCode:"+"086"+" "
+                                            +"url:"+url);
         }
     }
 

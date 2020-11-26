@@ -56,6 +56,21 @@ public class InstallManager {
         }
     }
 
+    public synchronized void startInstall(String path,boolean isValid)
+    {
+        Log.d(TAG, "startInstall()");
+
+        if(isValid){
+            installUpgrade(path);
+        }else{
+            Log.d(TAG, "startInstall failed()");
+            if(mInstallManagerListener != null){
+                Log.d(TAG, "startInstall failed onInstallFailure()");
+                mInstallManagerListener.onInstallFailure();
+            }
+        }
+    }
+
     public synchronized boolean installUpgrade(String path)
     {
         boolean ret = false;
