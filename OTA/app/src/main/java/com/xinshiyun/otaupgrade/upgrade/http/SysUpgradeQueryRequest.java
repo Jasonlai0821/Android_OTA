@@ -68,7 +68,7 @@ public class SysUpgradeQueryRequest extends AbstractHttpGet {
                         mHttpSysUpgradeRequestListener.onSysUpgradeRequestSuccess(updateInfo);
                     }
                 }
-                if (code == -1) {
+                if (code <= -1) {
                     if (mHttpSysUpgradeRequestListener != null){
                         mHttpSysUpgradeRequestListener.onSysUpgradeRequestFailure(OTAUpgradeQueryFail.no_update);
                     }

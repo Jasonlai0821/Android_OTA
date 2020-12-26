@@ -2,6 +2,7 @@ package com.xinshiyun.otaupgrade.upgrade;
 
 import android.app.DownloadManager;
 import android.content.Context;
+import android.os.Build;
 import android.os.Environment;
 import android.os.Handler;
 import android.os.Message;
@@ -166,8 +167,13 @@ public class OTAUpgradeServiceImp {
     {
         String path = "";
 
-        File catchedDir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS);
-        path = catchedDir.getAbsolutePath();
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            path = "/data";
+        }else{
+            File catchedDir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS);
+            //File catchedDir = Environment.getExternalStorageDirectory();
+            path = catchedDir.getAbsolutePath();
+        }
         Log.i(TAG, "download system package:" + path);
         return path;
     }
@@ -435,11 +441,14 @@ public class OTAUpgradeServiceImp {
                     onStopDownloadProgress();
                     releaseCurrentInfo();
                     OTAUpgradeInfo upgradeinfo = OTAUpgradeSharePreference.getOTAUpgradeInfo(mContext);
-                    Utils.copyFile(mDownloadTaskExcutor.getPath(downloadId), Utils.getFileName(mDownloadTaskExcutor.getPath(downloadId)));
-                    Utils.deletefile(mDownloadTaskExcutor.getPath(downloadId));
-                    upgradeinfo.setFilePath(Utils.getFileName(mDownloadTaskExcutor.getPath(downloadId)));
-
-                    mIsPackageValid = checkUpgradeFileValid(Utils.getFileName(mDownloadTaskExcutor.getPath(downloadId)));
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                        upgradeinfo.setFilePath(mDownloadTaskExcutor.getPath(downloadId));
+                    }else{
+                        Utils.copyFile(mDownloadTaskExcutor.getPath(downloadId), Utils.getFileName(mDownloadTaskExcutor.getPath(downloadId)));
+                        Utils.deletefile(mDownloadTaskExcutor.getPath(downloadId));
+                        upgradeinfo.setFilePath(Utils.getFileName(mDownloadTaskExcutor.getPath(downloadId)));
+                    }
+                    mIsPackageValid = checkUpgradeFileValid(upgradeinfo.getFilePath());
 
                     if(isForceUpgrade(upgradeinfo)){//not notify UI for user's interaction
                         onStartInstall(Utils.getFileName(mDownloadTaskExcutor.getPath(downloadId)));

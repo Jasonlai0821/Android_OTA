@@ -11,7 +11,7 @@ import android.net.Uri;
 
 public class OTAUpgradeProvider extends ContentProvider implements SharedPreferences.OnSharedPreferenceChangeListener {
 
-    private final static String TAG = "com.skyworth.ota";
+    private final static String TAG = "com.xsy.ota";
 
     private static UriMatcher matcher = new UriMatcher(UriMatcher.NO_MATCH);
 
@@ -59,7 +59,7 @@ public class OTAUpgradeProvider extends ContentProvider implements SharedPrefere
     @Override
     public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
         if (key.equals("exist")){
-            getContext().getContentResolver().notifyChange(Uri.parse("content://com.skyworth.ota/isExist"), null);
+            getContext().getContentResolver().notifyChange(Uri.parse("content://com.xsy.ota/isExist"), null);
         }
     }
 }

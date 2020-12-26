@@ -98,7 +98,7 @@ public class Utils {
             if(fs != null){
                 for (File f : fs) {
                     if (f.exists()) {
-                        if (f.getName().contains("downloadfile")||f.getName().contains("AIUI") || f.getName().contains("update_")) {
+                        if (f.getName().contains("downloadfile")||f.getName().contains("AIUI") || f.getName().contains("update")) {
                             if (f.getName().contains("bin") || f.getName().contains("img")||f.getName().contains("zip")) {
                                 if(f.delete()){
                                 }else{

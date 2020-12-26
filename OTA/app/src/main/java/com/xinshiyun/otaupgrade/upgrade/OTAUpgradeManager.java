@@ -148,6 +148,7 @@ public class OTAUpgradeManager {
                 }
                 Log.d(TAG, "onCreate() NetWorkState is NETWORK_NONE");
             }
+            startOTAQueryRequest();
         }
 
         @Override

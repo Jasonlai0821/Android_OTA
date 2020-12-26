@@ -1,8 +1,14 @@
 package com.xinshiyun.otaupgrade.upgrade.misc;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.net.wifi.WifiInfo;
 import android.net.wifi.WifiManager;
+import android.os.Build;
+import android.util.Log;
+
+import com.quectel.modemtool.ModemTool;
+import com.quectel.modemtool.NvConstants;
 //import android.os.SystemProperties;
 
 public class SysProperties {
@@ -23,9 +29,11 @@ public class SysProperties {
         String vers = SystemPropertiesProxy.get(contex, "ro.build.version.incremental","000000000");
         if(vers != null){
             String ver = vers.replaceAll("^(0+)", "");
-            int start = ver.indexOf("troy.")+6;
-            int end = start + 7;
-            String result = ver.substring(start,end);
+            for(int i =0; i < 2; i++){
+                ver = ver.substring(ver.indexOf(".")+1);
+            }
+
+            String result = ver.substring(1,8);
             StringBuffer strbf=new StringBuffer(result);
             strbf.insert(3,"0");
             strbf.append("0");
@@ -41,8 +49,29 @@ public class SysProperties {
         return version;
     }
 
+    @SuppressLint("MissingPermission")
     public static String getSerialNO(Context context) {
-        return SystemPropertiesProxy.get(context, "ro.serialno", "00000000000000");
+        if(getModel(context).equals("XTS100")){
+            ModemTool modemTool = new ModemTool();
+            String result = modemTool.sendAtCommand(NvConstants.REQUEST_SEND_AT_COMMAND,"AT+QCSN?");
+            if(result == null || result.contains("ERROR")){
+                result = "000000000000000";
+            }else if(result.contains("OK")){
+                String temp = result.substring(result.indexOf("\"")+1,result.length());
+                result = temp.substring(0,temp.indexOf("\""));
+                if(result.equals("")){
+                    result = "000000000000000";
+                }
+            }
+
+            return result;
+        }else{
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                return Build.getSerial();
+            }else{
+                return SystemPropertiesProxy.get(context, "ro.serialno", "000000000000000");
+            }
+        }
     }
 
     // 获取当前产品版本号
