@@ -45,6 +45,7 @@ public class OTAUpgradeServiceImp {
 
     private OTAUpgradeServiceCallback mOTAUpgradeImpListener = null;
     private boolean mIsPackageValid = false;
+    private static int mCurrentDownloadId = -1;
 
     public Context mContext;
     private static boolean isForceUpgrade = false;
@@ -111,7 +112,7 @@ public class OTAUpgradeServiceImp {
                 isForceUpgrade = isForceUpgrade(mCurrentOTAUpgradeInfo);
 
                 if(isForceUpgrade){// force uprage without user's interaction
-                    long downloadid = onStartDownload();
+                    mCurrentDownloadId = onStartDownload();
                 }else{//notify UI to process user's interaction
                     Log.d(TAG,"onSysUpgradeQuerySuccess() nofity user for interaction");
                 }
@@ -285,6 +286,10 @@ public class OTAUpgradeServiceImp {
             Log.d(TAG, "onStartDownload() mCurrentOTAUpgradeInfo is null");
             return downloadId;
         }
+        if(mCurrentDownloadId == 0){
+            Log.d(TAG, "onStartDownload() current is downloading");
+            return mCurrentDownloadId;
+        }
         OTAUpgradeSharePreference.setForceInstall(mContext,isForceUpgrade);
         OTAUpgradeSharePreference.setOTAUpgradeInfo(mContext,mCurrentOTAUpgradeInfo);
 
@@ -300,6 +305,7 @@ public class OTAUpgradeServiceImp {
 
         Log.d(TAG, "onStartDownload() downloadId:"+downloadId);
 
+        mCurrentDownloadId = downloadId;
         return downloadId;
     }
 
@@ -308,6 +314,7 @@ public class OTAUpgradeServiceImp {
         int ret = -1;
         Log.d(TAG, "onStopDownload() downloadId:"+downloadId);
 
+        mCurrentDownloadId = -1;
         if(downloadId == getCurrentDownloadId()){
             removeDownloadTask(downloadId);
             deleteObsoletingSysUpgradeFile();

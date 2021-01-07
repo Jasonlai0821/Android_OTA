@@ -168,6 +168,7 @@ public class DownloadTaskExcutor {
                         conn = (HttpURLConnection) url.openConnection();
                         conn.setConnectTimeout(5000);
                         //获取到文件的大小
+                        cur_size = 0;
                         total_size = conn.getContentLength();
                         Log.d(TAG,"doDownloadUpdateImg() total_size ="+total_size);
                         is = conn.getInputStream();
@@ -179,7 +180,7 @@ public class DownloadTaskExcutor {
                         fos = new FileOutputStream(file);
                         BufferedInputStream bis = new BufferedInputStream(is);
 
-                        byte[] buffer = new byte[1024];
+                        byte[] buffer = new byte[1024*1024];
 
                         while((len = bis.read(buffer)) != -1){
                             fos.write(buffer,0,len);

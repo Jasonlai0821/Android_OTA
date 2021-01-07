@@ -2,20 +2,16 @@ package com.xinshiyun.otaupgrade;
 
 import android.Manifest;
 import android.app.Activity;
-import android.app.DownloadManager;
-import android.net.ConnectivityManager;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.util.Log;
 import android.view.View;
-import android.view.Window;
 import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
-import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
@@ -24,9 +20,6 @@ import androidx.core.content.ContextCompat;
 import com.xinshiyun.otaupgrade.upgrade.OTAUpgradeInfo;
 import com.xinshiyun.otaupgrade.upgrade.OTAUpgradeManager;
 import com.xinshiyun.otaupgrade.upgrade.OTAUpgradeManager.OTASTATE;
-import com.xinshiyun.otaupgrade.upgrade.OTAUpgradeSharePreference;
-import com.xinshiyun.otaupgrade.upgrade.download.DownloadProgress;
-import com.xinshiyun.otaupgrade.upgrade.misc.Utils;
 
 import java.util.ArrayList;
 
