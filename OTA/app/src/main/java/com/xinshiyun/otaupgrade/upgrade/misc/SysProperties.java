@@ -63,7 +63,6 @@ public class SysProperties {
                     result = "000000000000000";
                 }
             }
-
             return result;
         }else{
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {

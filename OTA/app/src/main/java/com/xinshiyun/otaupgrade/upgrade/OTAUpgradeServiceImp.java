@@ -92,7 +92,9 @@ public class OTAUpgradeServiceImp {
 
                 if(OTAUpgradeSharePreference.getSysDownloadId(mContext) != -1){
                     removeDownloadTask(OTAUpgradeSharePreference.getSysDownloadId(mContext));
-                    deleteObsoletingSysUpgradeFile();
+                    if(mCurrentDownloadId == -1){
+                        deleteObsoletingSysUpgradeFile();
+                    }
                 }
                 releaseCurrentInfo();
                 if(mOTAUpgradeImpListener != null) {
@@ -101,12 +103,16 @@ public class OTAUpgradeServiceImp {
             }else{
                 if(OTAUpgradeSharePreference.getSysDownloadId(mContext) == -1){//current state without download task
                     Log.d(TAG,"onSysUpgradeQuerySuccess() current without download task!");
-                    deleteObsoletingSysUpgradeFile();
+                    if(mCurrentDownloadId == -1){
+                        deleteObsoletingSysUpgradeFile();
+                    }
                 }else{
                     Log.d(TAG,"onSysUpgradeQuerySuccess() current with some download task!");
 
                     removeDownloadTask(OTAUpgradeSharePreference.getSysDownloadId(mContext));
-                    deleteObsoletingSysUpgradeFile();
+                    if(mCurrentDownloadId == -1){
+                        deleteObsoletingSysUpgradeFile();
+                    }
                 }
 
                 isForceUpgrade = isForceUpgrade(mCurrentOTAUpgradeInfo);
